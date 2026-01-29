@@ -1,0 +1,31 @@
+{
+  "name": "profileos",
+  "version": "1.0.0",
+  "description": "ProfileOS - AI-powered investor profile and query system",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arbelamirs-ctrl/profileos.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/arbelamirs-ctrl/profileos/issues"
+  },
+  "homepage": "https://github.com/arbelamirs-ctrl/profileos#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.1.0",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.9.3"
+  }
+}
