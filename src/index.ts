@@ -66,3 +66,43 @@ app.post("/investor/query", async (req: Request, res: Response) => {
 });
 
 app.listen(3000, () => console.log("ProfileOS API running on port 3000"));
+
+// Add theses table
+db.exec(`
+  CREATE TABLE IF NOT EXISTS theses (
+    id TEXT PRIMARY KEY,
+    user_id TEXT,
+    asset_symbol TEXT,
+    title TEXT,
+    body TEXT,
+    status TEXT DEFAULT 'open',
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP
+  );
+`);
+
+// POST /theses - Create investment thesis
+app.post("/theses", (req: Request, res: Response) => {
+  const { user_id, asset_symbol, title, body, status } = req.body || {};
+  if (!user_id || !asset_symbol || !title) {
+    res.status(400).json({ error: "user_id, asset_symbol, and title required" });
+    return;
+  }
+  const id = crypto.randomUUID();
+  db.prepare("INSERT INTO theses (id, user_id, asset_symbol, title, body, status) VALUES (?, ?, ?, ?, ?, ?)").run(id, user_id, asset_symbol.toUpperCase(), title, body || "", status || "open");
+  res.status(201).json({ id, user_id, asset_symbol: asset_symbol.toUpperCase(), title, body, status: status || "open" });
+});
+
+// GET /users/:id/theses - Get user's theses
+app.get("/users/:id/theses", (req: Request, res: Response) => {
+  const theses = db.prepare("SELECT * FROM theses WHERE user_id = ? ORDER BY created_at DESC").all(req.params.id);
+  res.json(theses);
+});
+
+// PATCH /theses/:id - Update thesis status
+app.patch("/theses/:id", (req: Request, res: Response) => {
+  const { status, body } = req.body || {};
+  if (status) db.prepare("UPDATE theses SET status = ? WHERE id = ?").run(status, req.params.id);
+  if (body) db.prepare("UPDATE theses SET body = ? WHERE id = ?").run(body, req.params.id);
+  const thesis = db.prepare("SELECT * FROM theses WHERE id = ?").get(req.params.id);
+  res.json(thesis);
+});
